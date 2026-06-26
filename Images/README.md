@@ -1,3 +1,11 @@
-# Images
+## 📸 Screenshots
 
-This folder contains screenshots used in the project documentation.
+### Script Execution
+
+![Script Running](Images/script-running.png)
+
+---
+
+### Generated CSV Report
+
+![CSV Output](Images/csv-output.png)

@@ -67,7 +67,7 @@ function Connect-M365Graph
     }
 }
 
-Connect_MgGraph
+Connect-MgGraph
 
 $ExportCSV = ".\M365_UserSignInReport_$((Get-Date).ToString('yyyyMMdd_HHmmss')).csv"
 $PrintedUser = 0
@@ -112,19 +112,40 @@ Get-MgUser -All -Property $RequiredProperties | Select-Object -Property $Require
 
     $AccountStatus = if ($AccountEnabled) { 'Enabled' } else { 'Disabled' }
 
-    # Get licenses
-    $Licenses = (Get-MgUserLicenseDetail -UserId $UPN).SkuPartNumber
-    $AssignedLicense = @()
+# Get licenses
+$AssignedLicense = @()
 
-    if ($Licenses.Count -eq 0) {
-        $LicenseDetails = "No License Assigned"
-    } else {
-        foreach ($License in $Licenses) {
-            $EasyName = $FriendlyNameHash[$License]
-            $AssignedLicense += if ($EasyName) { $EasyName } else { $License }
-        }
-        $LicenseDetails = $AssignedLicense -join ", "
+try {
+    $LicenseObjects = Get-MgUserLicenseDetail -UserId $UPN -ErrorAction Stop
+
+    if ($null -eq $LicenseObjects -or $LicenseObjects.Count -eq 0) {
+        $Licenses = @()
     }
+    else {
+        $Licenses = $LicenseObjects | Select-Object -ExpandProperty SkuPartNumber
+    }
+}
+catch {
+    $Licenses = @()
+}
+
+if ($Licenses.Count -eq 0) {
+    $LicenseDetails = "No License Assigned"
+}
+else {
+    foreach ($License in $Licenses) {
+        $EasyName = $FriendlyNameHash[$License]
+
+        if ($EasyName) {
+            $AssignedLicense += $EasyName
+        }
+        else {
+            $AssignedLicense += $License
+        }
+    }
+
+    $LicenseDetails = $AssignedLicense -join ", "
+}
 
     $Print = 1
 
