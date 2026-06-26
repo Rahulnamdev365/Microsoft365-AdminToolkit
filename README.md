@@ -1,2 +1,15 @@
-# Microsoft365-AdminToolkit
-Enterprise PowerShell toolkit for Microsoft 365 administration, reporting, and automation.
+Microsoft365-AdminToolkit
+
+About
+
+Current Projects
+
+Repository Structure
+
+Features
+
+Requirements
+
+Roadmap
+
+License
